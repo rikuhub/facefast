@@ -55,7 +55,7 @@ def read_root():
     return """
     <html>
     <body>
-    <h1>おはよ</h1>
+    <h1>uvicorn main:app --reload</h1>
     </body>
     </html>
     """
