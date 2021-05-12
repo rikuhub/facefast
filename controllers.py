@@ -56,33 +56,4 @@ cap.release()
 cv2.destroyAllWindows()
 
 def index(request: Request):
-#     while True:
-#         ret, im = cap.read()
-
-#         # ここからのコードを変えながら、微調整するとオリジナルになると思います。
-#         cascade = cv2.CascadeClassifier(cascade_path)
-#         img_gray = cv2.cvtColor(im, cv2.COLOR_RGB2GRAY)
-#         faces = cascade.detectMultiScale(
-#             img_gray, scaleFactor=1.1, minNeighbors=1, minSize=(80, 80))  # minNeighborsは人数
-#         print(faces)
-
-#         if len(faces) > 0:
-#             for (x, y, w, h) in faces:
-#                 cv2.rectangle(im, (x, y), (x+w, y+h), (255, 0, 0), 2)
-
-#         img = cv2.cvtColor(im, cv2.COLOR_BGR2RGB)
-
-#         plt.imshow(img)
-
-#         blur = cv2.GaussianBlur(im, (0, 0), 1)
-#         cv2.imshow('camera capture', blur)
-#         key = cv2.waitKey(10)
-#         # カメラはESCキーで終了できるように。
-#         if key == 27:
-#             break
-# # 一旦画像削除の命令
-#     cap.release()
-# # カメラが立ち上がっているので、全てのウィンドウを閉じる
-#     cv2.destroyAllWindows()
-    # new 変更！
     return templates.TemplateResponse('index.html', {'request': request})
