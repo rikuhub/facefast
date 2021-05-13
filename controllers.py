@@ -5,6 +5,7 @@ import cv2
 import matplotlib.pyplot as plt
 from starlette.templating import Jinja2Templates
 from starlette.requests import Request
+import face_recognition
 
 app = FastAPI()
 
