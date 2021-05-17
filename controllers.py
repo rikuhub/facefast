@@ -23,6 +23,7 @@ CF.BaseUrl.set(BASE_URL)
 cap = cv2.VideoCapture(0)
 cascade_path = "../../opencv/data/haarcascades/haarcascade_frontalface_alt.xml"
 
+
 while True:
     ret, im = cap.read()
 
