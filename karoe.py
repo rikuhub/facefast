@@ -2,7 +2,7 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt # matplotlibを読み込んで、pyplotを pltという名前で使う。
-
+import re
 # 先ほど集めてきた画像データのあるディレクトリ
 input_data_path = './rikus/'
 # 切り抜いた画像の保存先ディレクトリ(予めディレクトリを作っておいてください)
@@ -13,13 +13,15 @@ cascade_path = "../../opencv/data/haarcascades/haarcascade_frontalface_alt.xml"
 faceCascade = cv2.CascadeClassifier(cascade_path)
 
 # 収集した画像の枚数(任意で変更)
-image_count = 9
+image_count = 13
 # 顔検知に成功した数(デフォルトで0を指定)
 face_detect_count = 0
 
 # 集めた画像データから顔が検知されたら、切り取り、保存する。
-for i in range(1, image_count+1):
-    img = cv2.imread(input_data_path + str(i) + '.JPG', cv2.IMREAD_COLOR)
+
+for i in range(image_count):
+    img = cv2.imread(input_data_path + str(image_count) + '.JPG', cv2.IMREAD_COLOR)
+    print(i)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     face = faceCascade.detectMultiScale(gray, 1.1, 3)
     if len(face) > 0:
