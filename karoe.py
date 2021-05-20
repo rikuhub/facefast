@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt # matplotlibを読み込んで、pyplotを pltという名前で使う。
 import re
+
 # 先ほど集めてきた画像データのあるディレクトリ
 input_data_path = './rikus/'
 # 切り抜いた画像の保存先ディレクトリ(予めディレクトリを作っておいてください)
