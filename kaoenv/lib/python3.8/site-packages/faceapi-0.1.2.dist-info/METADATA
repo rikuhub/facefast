@@ -1,0 +1,16 @@
+Metadata-Version: 2.1
+Name: faceapi
+Version: 0.1.2
+Summary: Face detector and recognition
+Home-page: UNKNOWN
+Author: Ellery Wang
+Author-email: elleryq92@gmail.com
+License: UNKNOWN
+Platform: UNKNOWN
+Requires-Dist: numpy
+Requires-Dist: opencv-python
+Requires-Dist: Pillow
+
+UNKNOWN
+
+
