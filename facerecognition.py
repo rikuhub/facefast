@@ -3,7 +3,7 @@ import pathlib
 import numpy as np
 
 
-path = pathlib.Path("./rikus")
+path = pathlib.Path("./rikukaroes/")
 names = [p for p in path.iterdir() if p.match("*.JPG")]
 print(a for a in names)
 # あるいは import glob で name = glob.glob("faces_me/*.jp*g")
