@@ -8,9 +8,10 @@
     <p>{{ age }}</p>
     <div class="photo">
         {% for photo in photos %}
-        <image src={{photo.url}}></image>
+        <img src="{{photo.image}}"></img>
         {% endfor %}
     </div>
+    <img src="rikuAngle0.JPG">
     <div class="col-md-2">
         <a href="/admin" class="btn btn-primary">Login</a>
         <!-- <video>{{ video }}</video> -->
