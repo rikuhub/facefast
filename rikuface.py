@@ -115,12 +115,13 @@ while (True):
 test_stream = pathlib.Path("./testphotos/")
 test_image_array = test_stream.glob("*.jpg")
 test_image_array = pathlib.Path("./testphotos/旅行.jpg")
+test_image_array = pathlib.Path("./testphotos/13957286285367.jpg")
 print(test_image_array)
 
 test_data = open(test_image_array, 'r+b')
 
-print('Pausing for 60 seconds to avoid triggering rate limit on free account...')
-time.sleep (60)
+# print('Pausing for 60 seconds to avoid triggering rate limit on free account...')
+# time.sleep (60)
 
 # Detect faces
 face_ids = []
