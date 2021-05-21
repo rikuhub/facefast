@@ -40,7 +40,7 @@ for I in range(4):
                         detection_model='detection_01')
 
     if not detected_faces:
-        raise Exception('No face detected from image {}'.format(mage_name))
+        raise Exception('No face detected from image {}'.format(image_name))
 
     print('Detected face ID from', image_name, ':')
     for face in detected_faces: print (face.face_id)
@@ -65,7 +65,3 @@ a = 0
 for i in personAges:
     a += i
 print(a/len(personAges))
-
-
-def index(request: Request):
-    return templates.TemplateResponse('index.html', {'request': request, 'age':age})
