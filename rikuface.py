@@ -114,7 +114,7 @@ while (True):
 
 test_stream = pathlib.Path("./testphotos/")
 test_image_array = test_stream.glob("*.jpg")
-test_image_array = pathlib.Path("./testphotos/13957286285367.jpg")
+test_image_array = pathlib.Path("./testphotos/旅行.jpg")
 print(test_image_array)
 
 test_data = open(test_image_array, 'r+b')
