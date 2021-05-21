@@ -24,6 +24,8 @@ from msrest.authentication import CognitiveServicesCredentials
 from azure.cognitiveservices.vision.face.models import TrainingStatusType, Person
 from functions import getAge, getRectangle
 # </snippet_imports>
+import db
+from models import User, Photo
 
 app = FastAPI()
 
@@ -83,7 +85,18 @@ for i in personAges:
     a += i
 estimate_age = a/len(personAges)
 
-
 def index(request: Request):
-    return templates.TemplateResponse('index.html', {'request': request, 'age':estimate_age, "photos":photodatas})
+    # ユーザとタスクを取得
+    # とりあえず今はadminユーザのみ取得
+    user = db.session.query(User).filter(User.username == 'admin').first()
+    photos = db.session.query(Photo).all()
+    db.session.close()
+ 
+    return templates.TemplateResponse('index.html',
+                                      {'request': request,
+                                       'user': user,
+                                       'photos': photos,
+                                       'age':estimate_age})
+# def index(request: Request):
+#     return templates.TemplateResponse('index.html', {'request': request, 'age':estimate_age, "photos":photodatas})
 
