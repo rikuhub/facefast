@@ -5,6 +5,12 @@
     <div class="col-md-10">
         <h1>Welcome to Simple toDo application</h1>
     </div>
+    <p>{{ age }}</p>
+    <div class="photo">
+        {% for photo in photos %}
+        <image src={{photo.url}}></image>
+        {% endfor %}
+    </div>
     <div class="col-md-2">
         <a href="/admin" class="btn btn-primary">Login</a>
         <!-- <video>{{ video }}</video> -->
