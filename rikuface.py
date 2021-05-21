@@ -1,9 +1,3 @@
-from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
-import cognitive_face as CF
-from starlette.templating import Jinja2Templates
-from starlette.requests import Request
-
 # <snippet_imports>
 import asyncio
 import io
@@ -25,18 +19,8 @@ from azure.cognitiveservices.vision.face.models import TrainingStatusType, Perso
 from functions import getAge, getRectangle
 # </snippet_imports>
 
-app = FastAPI()
-
-# new テンプレート関連の設定 (jinja2)
-templates = Jinja2Templates(directory="templates")
-jinja_env = templates.env  # Jinja2.Environment : filterやglobalの設定用
-
-
-
 KEY = '6d4ad97e91f54a02b359b2ef151254c7'
 ENDPOINT = 'https://rikuface.cognitiveservices.azure.com/'
-
-
 #IMAGE_BASE_URL = 'https://csdx.blob.core.windows.net/resources/Face/Images/'
 PERSON_GROUP_ID = str(uuid.uuid4()) # assign a random ID (or name it anything)
 TARGET_PERSON_GROUP_ID = str(uuid.uuid4()) # assign a random ID (or name it anything)
@@ -46,7 +30,6 @@ print()
 print('DETECT FACES')
 print()
 personAges = []
-photodatas = []
 for I in range(4):
     image_path = pathlib.Path("./rikukaroes/cutted_zuck" + str(I) + ".JPG")
     image_name = os.path.basename(image_path)
@@ -74,16 +57,15 @@ for I in range(4):
         drawing.text(getAge(face), "Age:" + str(face.face_attributes.age),align = 'Left',  fill = 'Red', font=font)
 
     personAges.append(face.face_attributes.age)
-    photodatas.append(image_data)
+    image_data.show()
     image_data.save(os.path.join('./rikuAngles/', "rikuAngle" + str(I) + ".JPG"))
 
 print(personAges)
 a = 0
 for i in personAges:
     a += i
-estimate_age = a/len(personAges)
+print(a/len(personAges))
 
 
 def index(request: Request):
-    return templates.TemplateResponse('index.html', {'request': request, 'age':estimate_age, "photos":photodatas})
-
+    return templates.TemplateResponse('index.html', {'request': request, 'age':age})
