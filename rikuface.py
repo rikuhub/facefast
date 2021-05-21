@@ -18,12 +18,17 @@ from msrest.authentication import CognitiveServicesCredentials
 from azure.cognitiveservices.vision.face.models import TrainingStatusType, Person
 from functions import getAge, getRectangle
 # </snippet_imports>
+from IPython.display import display_jpeg
 
 KEY = '6d4ad97e91f54a02b359b2ef151254c7'
 ENDPOINT = 'https://rikuface.cognitiveservices.azure.com/'
 #IMAGE_BASE_URL = 'https://csdx.blob.core.windows.net/resources/Face/Images/'
-PERSON_GROUP_ID = str(uuid.uuid4()) # assign a random ID (or name it anything)
-TARGET_PERSON_GROUP_ID = str(uuid.uuid4()) # assign a random ID (or name it anything)
+PERSON_GROUP_ID = str(uuid.uuid4())
+TARGET_PERSON_GROUP_ID = str(uuid.uuid4())
+
+
+
+
 face_client = FaceClient(ENDPOINT, CognitiveServicesCredentials(KEY))
 print('-----------------------------')
 print()
@@ -57,7 +62,7 @@ for I in range(4):
         drawing.text(getAge(face), "Age:" + str(face.face_attributes.age),align = 'Left',  fill = 'Red', font=font)
 
     personAges.append(face.face_attributes.age)
-    image_data.show()
+    #image_data.show()
     image_data.save(os.path.join('./rikuAngles/', "rikuAngle" + str(I) + ".JPG"))
 
 print(personAges)
@@ -65,3 +70,71 @@ a = 0
 for i in personAges:
     a += i
 print(a/len(personAges))
+
+print('Person group:', PERSON_GROUP_ID)
+face_client.person_group.create(person_group_id=PERSON_GROUP_ID, name=PERSON_GROUP_ID)
+
+# Define woman friend
+riku = face_client.person_group_person.create(PERSON_GROUP_ID, "Riku")
+# land = face_client.person_group_person.create(PERSON_GROUP_ID, "Land")
+
+photopath = pathlib.Path("./rikuAngles/")
+# Find all jpeg images of friends in working directory
+riku_images = [file for file in photopath.glob("r*.JPG")]
+# land_images = [file for file in pathlib.Path("./rikukaroes/rikuAngles/*.JPG") if file.startswith("l")]
+
+
+# Add to a riku person
+for image in riku_images:
+    r = open(image, 'r+b')
+    face_client.person_group_person.add_face_from_stream(PERSON_GROUP_ID,riku.person_id, r)
+    print(str(image))
+
+# Add to a land person
+# for image in land_images:
+#     l = open(image, 'r+b')
+#     face_client.person_group_person.add_face_from_stream(PERSON_GROUP_ID, land.person_id, l)
+
+print()
+print('Training the person group...')
+# Train the person group
+face_client.person_group.train(PERSON_GROUP_ID)
+
+while (True):
+    training_status = face_client.person_group.get_training_status(PERSON_GROUP_ID)
+    print("Training status: {}.".format(training_status.status))
+    print()
+    if (training_status.status is TrainingStatusType.succeeded):
+        break
+    elif (training_status.status is TrainingStatusType.failed):
+        face_client.person_group.delete(person_group_id=PERSON_GROUP_ID)
+        sys.exit('Training the person group has failed.')
+    time.sleep(5)
+
+
+test_stream = pathlib.Path("./testphotos/")
+test_image_array = test_stream.glob("*.jpg")
+test_image_array = pathlib.Path("./testphotos/13957286285367.jpg")
+print(test_image_array)
+
+test_data = open(test_image_array, 'r+b')
+
+print('Pausing for 60 seconds to avoid triggering rate limit on free account...')
+time.sleep (60)
+
+# Detect faces
+face_ids = []
+# We use detection model 3 to get better performance.
+faces = face_client.face.detect_with_stream(test_data, detection_model='detection_03')
+for face in faces:
+    face_ids.append(face.face_id)
+
+results = face_client.face.identify(face_ids, PERSON_GROUP_ID)
+print('Identifying faces in {}'.format(os.path.basename(image.name)))
+if not results:
+    print('No person identified in the person group for faces from {}.'.format(os.path.basename(image.name)))
+for person in results:
+    if len(person.candidates) > 0:
+        print('Person for face ID {} is identified in {} with a confidence of {}.'.format(person.face_id, os.path.basename(image.name), person.candidates[0].confidence)) # Get topmost confidence score
+    else:
+        print('No person identified for face ID {} in {}.'.format(person.face_id, os.path.basename(image.name)))
