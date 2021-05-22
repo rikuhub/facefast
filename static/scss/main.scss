@@ -1,0 +1,21 @@
+div {
+    h1 {
+        color: red;
+    }
+    .photo{
+        table{
+            width:100%;
+    
+            td{
+                width:15vw;
+                
+                img{
+                    top: 0;
+                    right: 0;
+                    bottom: 0;
+                    left: 0;
+                }
+            }
+        }
+    }
+}
