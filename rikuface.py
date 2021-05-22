@@ -112,31 +112,74 @@ while (True):
     time.sleep(5)
 
 
+"""
+テストデータの表示もする
+"""
+
 test_stream = pathlib.Path("./testphotos/")
 test_image_array = test_stream.glob("*.jpg")
-test_image_array = pathlib.Path("./testphotos/旅行.jpg")
+# test_image_array = pathlib.Path("./testphotos/旅行.jpg")
 test_image_array = pathlib.Path("./testphotos/13957286285367.jpg")
 print(test_image_array)
 
 test_data = open(test_image_array, 'r+b')
 
-# print('Pausing for 60 seconds to avoid triggering rate limit on free account...')
-# time.sleep (60)
+detected_faces = face_client.face.detect_with_stream(test_data,
+                        return_face_landmarks=True,
+                        return_face_attributes=['accessories','age','emotion','gender','glasses','hair','makeup','smile'],
+                        detection_model='detection_01')
+
+if not detected_faces:
+    raise Exception('No face detected from image {}'.format(image_name))
+
+print('Detected face ID from', image_name, ':')
+for face in detected_faces: print (face.face_id)
+print()
+
+first_image_face_ID = detected_faces[0].face_id
+
+test_data = Image.open(test_image_array)
+drawing = ImageDraw.Draw(test_data)
+font = ImageFont.truetype('/Library/Fonts/Arial\ Unicode.ttf/Arial', 30)
+
+for face in detected_faces:
+    drawing.rectangle(getRectangle(face), outline='Blue', width = 3)
+    drawing.text(getAge(face), "Age:" + str(face.face_attributes.age),align = 'Left',  fill = 'Red', font=font)
+
+personAges.append(face.face_attributes.age)
+test_data.show()
+
+
+
+print('Pausing for 60 seconds to avoid triggering rate limit on free account...')
+time.sleep (15)
+print('Pausing for 45 seconds to avoid triggering rate limit on free account...')
+time.sleep (15)
+print('Pausing for 30 seconds to avoid triggering rate limit on free account...')
+time.sleep (15)
+print('Pausing for 15 seconds to avoid triggering rate limit on free account...')
+time.sleep (15)
 
 # Detect faces
 face_ids = []
+face_ids = list(map(lambda x: x.face_id, detected_faces))
 # We use detection model 3 to get better performance.
-faces = face_client.face.detect_with_stream(test_data, detection_model='detection_03')
+test_data = open(test_image_array, 'r+b')
+faces = face_client.face.detect_with_stream(test_data, return_face_landmarks=True,
+                        return_face_attributes=['accessories','age','emotion','gender','glasses','hair','makeup','smile'],
+                        detection_model='detection_01')
 for face in faces:
     face_ids.append(face.face_id)
 
-results = face_client.face.identify(face_ids, PERSON_GROUP_ID)
-print('Identifying faces in {}'.format(os.path.basename(image.name)))
-if not results:
-    print('No person identified in the person group for faces from {}.'.format(os.path.basename(image.name)))
-for person in results:
-    if len(person.candidates) > 0:
-        print('Person for face ID {} is identified in {} with a confidence of {}.'.format(person.face_id, os.path.basename(image.name), person.candidates[0].confidence)) # Get topmost confidence score
-    else:
-        print('No person identified for face ID {} in {}.'.format(person.face_id, os.path.basename(image.name)))
 
+
+results = face_client.face.identify(face_ids, PERSON_GROUP_ID)
+for image in riku_images:
+    print('Identifying faces in {}'.format(os.path.basename(image.name)))
+    if not results:
+        print('No person identified in the person group for faces from {}.'.format(os.path.basename(image.name)))
+    for person in results:
+        if len(person.candidates) > 0:
+            print('Person for face ID {} is identified in {} with a confidence of {}.'.format(person.face_id, os.path.basename(image.name), person.candidates[0].confidence)) # Get topmost confidence score
+        else:
+            print('No person identified for face ID {} in {}.'.format(person.face_id, os.path.basename(image.name)))
