@@ -139,3 +139,4 @@ for person in results:
         print('Person for face ID {} is identified in {} with a confidence of {}.'.format(person.face_id, os.path.basename(image.name), person.candidates[0].confidence)) # Get topmost confidence score
     else:
         print('No person identified for face ID {} in {}.'.format(person.face_id, os.path.basename(image.name)))
+

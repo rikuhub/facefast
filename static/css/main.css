@@ -1,0 +1,13 @@
+.photo table{
+    width:100%;
+}
+
+.photo td{
+    width:15vw;
+}
+
+.photo img{
+    width: 100%;
+    height: 20vh;
+    object-fit: cover;
+}
