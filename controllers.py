@@ -135,20 +135,44 @@ test_image_array = test_stream.glob("*.jpg")
 test_image_array = pathlib.Path("./static/testphotos/旅行.jpg")
 test_image_array = pathlib.Path("./static/testphotos/13957286285367.jpg")
 print(test_image_array)
+test_name = os.path.basename(test_image_array)
 
 test_data = open(test_image_array, 'r+b')
 
-# print('Pausing for 60 seconds to avoid triggering rate limit on free account...')
-# time.sleep (60)
+detected_faces = face_client.face.detect_with_stream(test_data,
+                        return_face_landmarks=True,
+                        return_face_attributes=['accessories','age','emotion','gender','glasses','hair','makeup','smile'],
+                        detection_model='detection_01')
 
-# Detect faces
+if not detected_faces:
+    raise Exception('No face detected from image {}'.format(image_name))
+
+print('Detected face ID from', test_name, ':')
+for face in detected_faces: print (face.face_id)
+print()
+
+first_image_face_ID = detected_faces[0].face_id
+
+test_data = Image.open(test_image_array)
+drawing = ImageDraw.Draw(test_data)
+font = ImageFont.truetype('/Library/Fonts/Arial\ Unicode.ttf/Arial', 30)
+
+for face in detected_faces:
+    drawing.rectangle(getRectangle(face), outline='Blue', width = 3)
+    drawing.text(getAge(face), "Age:" + str(face.face_attributes.age),align = 'Left',  fill = 'Red', font=font)
+test_data.save(os.path.join('./static/testphotos/', "test" + "0" + ".jpg"))
+
 face_ids = []
+face_ids = list(map(lambda x: x.face_id, detected_faces))
 # We use detection model 3 to get better performance.
-faces = face_client.face.detect_with_stream(test_data, detection_model='detection_03')
+test_data = open(test_image_array, 'r+b')
+faces = face_client.face.detect_with_stream(test_data, return_face_landmarks=True,
+                        return_face_attributes=['accessories','age','emotion','gender','glasses','hair','makeup','smile'],
+                        detection_model='detection_01')
 for face in faces:
     face_ids.append(face.face_id)
 
-confidence = "0"
+confidence = 0
 results = face_client.face.identify(face_ids, PERSON_GROUP_ID)
 print('Identifying faces in {}'.format(os.path.basename(image.name)))
 if not results:
@@ -156,12 +180,13 @@ if not results:
 for person in results:
     if len(person.candidates) > 0:
         print('Person for face ID {} is identified in {} with a confidence of {}.'.format(person.face_id, os.path.basename(image.name), person.candidates[0].confidence)) # Get topmost confidence score
-        confidence = str(person.candidates[0].confidence)
+        confidence = float(person.candidates[0].confidence) * 100
+        print(confidence)
     else:
         print('No person identified for face ID {} in {}.'.format(person.face_id, os.path.basename(image.name)))
 
 
-
+print(confidence)
 def index(request: Request):
     # ユーザとタスクを取得
     # とりあえず今はadminユーザのみ取得
@@ -177,10 +202,12 @@ def index(request: Request):
 
 #img_path = "./static/rikuAngles/rikuAngle0.JPG"
 img_paths = ["./static/rikuAngles/rikuAngle{}.JPG".format(str(i)) for i in range(6)]
+test_path = "./static/testphotos/test0.jpg"
 
 def rectangles(request: Request):
     return templates.TemplateResponse('rectangles.html',
                                         {'request':request,
                                         'imgs':img_paths,
+                                        'test':test_path,
                                         'confidence':confidence,
                                         })

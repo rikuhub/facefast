@@ -1,29 +1,64 @@
-{% extends "layout.html" %}
-{% block content %}
-<br>
-<div class="row">
-    <div class="col-md-10">
-        <h1>Welcome to Simple toDo application</h1>
+<html lang="ja">
+
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="{{ url_for('static', path='/css/main.css') }}" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>Simple Face Recognition App</title>
+</head>
+
+<body>
+    <div>
+        <div class="container">
+            <br>
+            <div class="row">
+                <div class="col-md-10">
+                    <h1>Welcome to Simple Face Recognition App</h1>
+                </div>
+                <div class="photo">
+                    <table>
+                        <th>
+                            {% for img in imgs %}
+                        <td>
+                            <img src="{{img}}"></img>
+                        </td>
+                        {% endfor %}
+                        </th>
+                    </table>
+                    <span class="testphoto">
+                        <img src="{{test}}">
+                        <div style="vertical-align: center;">
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+                            <h3 style="font-size: x-large;">俺確率</h3>
+                            <span style="display: flex; vertical-align: baseline;">
+                                <p>この画像は</p>
+                                {% if confidence > 0.5 %}
+                                <p style="color: red; font-size: xx-large;"> {{confidence}} %</p>
+                                {% else %}
+                                <p> {{confidence}} %</p>
+                                {% endif %}
+                                <p>の確率で</p>
+                                {% if confidence > 0.5 %}
+                                <p style="color: rebeccapurple; font-size: xx-large;">俺</p>
+                                {% else %}
+                                <p>俺</p>
+                                {% endif %}
+                            </span>
+                        </div>
+                    </span>
+                </div>
+            </div>
+        </div>
     </div>
-    
-    <div class="photo">
-        <table>
-            <th>
-                {% for img in imgs %}
-                <td>
-                    <img src="{{img}}"></img>
-                </td>
-                {% endfor %}    
-            </th>
-        </table>
-        <p>{{confidence}}</p>
-    </div>
-    <div class="col-md-2">
-        <a href="/admin" class="btn btn-primary">Login</a>
-    </div>
-</div>
- 
-<hr>
-<p>This is a simple toDo application powered by <b>FastAPI</b>!</p>
- 
-{% endblock %}
+    <br>
+</body>
+
+</html>

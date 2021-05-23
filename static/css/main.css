@@ -11,3 +11,29 @@
     height: 20vh;
     object-fit: cover;
 }
+
+.photo .testphoto{
+    height: 20vh;
+    text-align:center;
+    display: flex;
+}
+.photo .testphoto div{
+    width: 50vw;
+    height: 60vh;
+}
+
+.photo .testphoto .p{
+    margin: 0; 
+    padding: 0;
+}
+
+.photo .testphoto img{
+    font-weight: bold;
+    color: #6091d3;/*文字色*/
+    background: #FFF;
+    border: solid 3px #6091d3;/*線*/
+    border-radius: 10vw;/*角の丸み*/
+    height:60vh;
+    width: 40vw;
+    object-fit: cover;
+}
