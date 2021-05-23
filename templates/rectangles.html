@@ -37,17 +37,18 @@
                             <br>
                             <br>
                             <br>
-                            <h3 style="font-size: x-large;">俺確率</h3>
-                            <span style="display: flex; vertical-align: baseline;">
-                                <p>この画像は</p>
+                            <h3 style="font-size: x-large; ">俺確率</h3>
+                            <span style="display: flex; text-align: center;">
                                 {% if confidence > 0.5 %}
                                 <p style="color: red; font-size: xx-large;"> {{confidence}} %</p>
                                 {% else %}
                                 <p> {{confidence}} %</p>
                                 {% endif %}
-                                <p>の確率で</p>
+                            </span>
+                            <p>の確率で</p>
+                            <span>
                                 {% if confidence > 0.5 %}
-                                <p style="color: rebeccapurple; font-size: xx-large;">俺</p>
+                                <p style="color: black; font-size: xx-large;">俺</p>
                                 {% else %}
                                 <p>俺</p>
                                 {% endif %}
