@@ -22,7 +22,7 @@ from PIL import Image, ImageDraw, ImageFont
 from azure.cognitiveservices.vision.face import FaceClient
 from msrest.authentication import CognitiveServicesCredentials
 from azure.cognitiveservices.vision.face.models import TrainingStatusType, Person
-from functions import getAge, getRectangle
+from functions import getAge, getRectangle, getName
 # </snippet_imports>
 from IPython.display import display_jpeg
 import db
@@ -36,14 +36,11 @@ templates = Jinja2Templates(directory="templates")
 jinja_env = templates.env  # Jinja2.Environment : filterやglobalの設定用
 
 
-
 KEY = '6d4ad97e91f54a02b359b2ef151254c7'
 ENDPOINT = 'https://rikuface.cognitiveservices.azure.com/'
 #IMAGE_BASE_URL = 'https://csdx.blob.core.windows.net/resources/Face/Images/'
 PERSON_GROUP_ID = str(uuid.uuid4())
 TARGET_PERSON_GROUP_ID = str(uuid.uuid4())
-
-
 
 
 face_client = FaceClient(ENDPOINT, CognitiveServicesCredentials(KEY))
@@ -53,19 +50,22 @@ print('DETECT FACES')
 print()
 personAges = []
 for I in range(4):
-    image_path = pathlib.Path("./static/rikukaroes/cutted_zuck" + str(I) + ".JPG")
+    image_path = pathlib.Path(
+        "./static/rikukaroes/cutted_zuck" + str(I) + ".JPG")
     image_name = os.path.basename(image_path)
     image_data = open(image_path, 'rb')
     detected_faces = face_client.face.detect_with_stream(image_data,
-                        return_face_landmarks=True,
-                        return_face_attributes=['accessories','age','emotion','gender','glasses','hair','makeup','smile'],
-                        detection_model='detection_01')
+                                                         return_face_landmarks=True,
+                                                         return_face_attributes=[
+                                                             'accessories', 'age', 'emotion', 'gender', 'glasses', 'hair', 'makeup', 'smile'],
+                                                         detection_model='detection_01')
 
     if not detected_faces:
         raise Exception('No face detected from image {}'.format(image_name))
 
     print('Detected face ID from', image_name, ':')
-    for face in detected_faces: print (face.face_id)
+    for face in detected_faces:
+        print(face.face_id)
     print()
 
     first_image_face_ID = detected_faces[0].face_id
@@ -75,12 +75,14 @@ for I in range(4):
     font = ImageFont.truetype('/Library/Fonts/Arial\ Unicode.ttf/Arial', 30)
 
     for face in detected_faces:
-        drawing.rectangle(getRectangle(face), outline='Blue', width = 3)
-        drawing.text(getAge(face), "Age:" + str(face.face_attributes.age),align = 'Left',  fill = 'Red', font=font)
+        drawing.rectangle(getRectangle(face), outline='Blue', width=3)
+        drawing.text(getAge(face), "Age:" + str(face.face_attributes.age),
+                     align='Left',  fill='Red', font=font)
 
     personAges.append(face.face_attributes.age)
-    #image_data.show()
-    image_data.save(os.path.join('./static/rikuAngles/', "rikuAngle" + str(I) + ".JPG"))
+    # image_data.show()
+    image_data.save(os.path.join('./static/rikuAngles/',
+                    "rikuAngle" + str(I) + ".JPG"))
 
 print(personAges)
 a = 0
@@ -90,11 +92,12 @@ estimate_age = int(a/len(personAges))
 
 
 print('Person group:', PERSON_GROUP_ID)
-face_client.person_group.create(person_group_id=PERSON_GROUP_ID, name=PERSON_GROUP_ID)
-
+face_client.person_group.create(
+    person_group_id=PERSON_GROUP_ID, name=PERSON_GROUP_ID)
 # Define woman friend
-riku = face_client.person_group_person.create(PERSON_GROUP_ID, "Riku")
+riku = face_client.person_group_person.create(PERSON_GROUP_ID, name="Riku")
 # land = face_client.person_group_person.create(PERSON_GROUP_ID, "Land")
+
 
 photopath = pathlib.Path("./static/rikuAngles/")
 # Find all jpeg images of friends in working directory
@@ -105,7 +108,8 @@ riku_images = [file for file in photopath.glob("r*.JPG")]
 # Add to a riku person
 for image in riku_images:
     r = open(image, 'r+b')
-    face_client.person_group_person.add_face_from_stream(PERSON_GROUP_ID,riku.person_id, r)
+    face_client.person_group_person.add_face_from_stream(
+        PERSON_GROUP_ID, riku.person_id, r)
     print(str(image))
 
 # Add to a land person
@@ -119,7 +123,8 @@ print('Training the person group...')
 face_client.person_group.train(PERSON_GROUP_ID)
 
 while (True):
-    training_status = face_client.person_group.get_training_status(PERSON_GROUP_ID)
+    training_status = face_client.person_group.get_training_status(
+        PERSON_GROUP_ID)
     print("Training status: {}.".format(training_status.status))
     print()
     if (training_status.status is TrainingStatusType.succeeded):
@@ -133,6 +138,7 @@ while (True):
 test_stream = pathlib.Path("./static/testphotos/")
 test_image_array = test_stream.glob("*.jpg")
 test_image_array = pathlib.Path("./static/testphotos/旅行.jpg")
+test_image_array = pathlib.Path("./static/testphotos/ローランド.jpg")
 test_image_array = pathlib.Path("./static/testphotos/13957286285367.jpg")
 print(test_image_array)
 test_name = os.path.basename(test_image_array)
@@ -140,74 +146,94 @@ test_name = os.path.basename(test_image_array)
 test_data = open(test_image_array, 'r+b')
 
 detected_faces = face_client.face.detect_with_stream(test_data,
-                        return_face_landmarks=True,
-                        return_face_attributes=['accessories','age','emotion','gender','glasses','hair','makeup','smile'],
-                        detection_model='detection_01')
+                                                     return_face_landmarks=True,
+                                                     return_face_attributes=[
+                                                         'accessories', 'age', 'emotion', 'gender', 'glasses', 'hair', 'makeup', 'smile'],
+                                                     detection_model='detection_01')
 
 if not detected_faces:
     raise Exception('No face detected from image {}'.format(image_name))
 
 print('Detected face ID from', test_name, ':')
-for face in detected_faces: print (face.face_id)
+for face in detected_faces:
+    print(face.face_id)
 print()
 
 first_image_face_ID = detected_faces[0].face_id
-
-test_data = Image.open(test_image_array)
-drawing = ImageDraw.Draw(test_data)
-font = ImageFont.truetype('/Library/Fonts/Arial\ Unicode.ttf/Arial', 30)
-
-for face in detected_faces:
-    drawing.rectangle(getRectangle(face), outline='Blue', width = 3)
-    drawing.text(getAge(face), "Age:" + str(face.face_attributes.age),align = 'Left',  fill = 'Red', font=font)
-test_data.save(os.path.join('./static/testphotos/', "test" + "0" + ".jpg"))
 
 face_ids = []
 face_ids = list(map(lambda x: x.face_id, detected_faces))
 # We use detection model 3 to get better performance.
 test_data = open(test_image_array, 'r+b')
 faces = face_client.face.detect_with_stream(test_data, return_face_landmarks=True,
-                        return_face_attributes=['accessories','age','emotion','gender','glasses','hair','makeup','smile'],
-                        detection_model='detection_01')
+                                            return_face_attributes=[
+                                                'accessories', 'age', 'emotion', 'gender', 'glasses', 'hair', 'makeup', 'smile'],
+                                            detection_model='detection_01')
 for face in faces:
     face_ids.append(face.face_id)
 
 confidence = 0
 results = face_client.face.identify(face_ids, PERSON_GROUP_ID)
-print('Identifying faces in {}'.format(os.path.basename(image.name)))
+print('Identifying faces in {}'.format(os.path.basename(test_name)))
 if not results:
-    print('No person identified in the person group for faces from {}.'.format(os.path.basename(image.name)))
+    print('No person identified in the person group for faces from {}.'.format(
+        os.path.basename(image.name)))
+
+test_data = Image.open(test_image_array)
+drawing = ImageDraw.Draw(test_data)
+font = ImageFont.truetype('/Library/Fonts/Arial\ Unicode.ttf/Arial', 20)
+
+test_path = "./static/testphotos/test0.jpg"
 for person in results:
     if len(person.candidates) > 0:
-        print('Person for face ID {} is identified in {} with a confidence of {}.'.format(person.face_id, os.path.basename(image.name), person.candidates[0].confidence)) # Get topmost confidence score
+        print('Person for face ID {} is identified in {} with a confidence of {}.'.format(person.face_id,
+              os.path.basename(image.name), person.candidates[0].confidence))  # Get topmost confidence score
         confidence = float(person.candidates[0].confidence) * 100
         print(confidence)
+
+        for face in detected_faces:
+            drawing.rectangle(getRectangle(face), outline='Blue', width=3)
+            drawing.text(getAge(face), "Age:" + str(face.face_attributes.age),align='Left',  fill='Red', font=font)
+            drawing.text(getName(face), "Possibility: HIGH",align='Left',  fill='red', font=font)
+        test_data.save(os.path.join('./static/testphotos/', "test" + "0" + ".jpg"))
     else:
-        print('No person identified for face ID {} in {}.'.format(person.face_id, os.path.basename(image.name)))
+        for face in detected_faces:
+            drawing.rectangle(getRectangle(face), outline='Blue', width=3)
+            drawing.text(getAge(face), "Age:" + str(face.face_attributes.age),align='Left',  fill='Red', font=font)
+            drawing.text(getName(face), "Possibility: LOW", align='Left',  fill='blue', font=font)
+        test_data.save(os.path.join('./static/testphotos/', "test" + "1" + ".jpg"))
+        print('No person identified for face ID {} in {}.'.format(
+            person.face_id, os.path.basename(image.name)))
+        test_path = "./static/testphotos/test1.jpg"
 
 
 print(confidence)
+
+
 def index(request: Request):
     # ユーザとタスクを取得
     # とりあえず今はadminユーザのみ取得
     user = db.session.query(User).filter(User.username == 'admin').first()
     photos = db.session.query(Photo).all()
     db.session.close()
- 
+
     return templates.TemplateResponse('index.html',
                                       {'request': request,
                                        'user': user,
                                        'photos': photos,
-                                       'age':estimate_age})
+                                       'age': estimate_age})
+
 
 #img_path = "./static/rikuAngles/rikuAngle0.JPG"
-img_paths = ["./static/rikuAngles/rikuAngle{}.JPG".format(str(i)) for i in range(6)]
-test_path = "./static/testphotos/test0.jpg"
-
+img_paths = [
+    "./static/rikuAngles/rikuAngle{}.JPG".format(str(i)) for i in range(6)]
+group_name = PERSON_GROUP_ID
 def rectangles(request: Request):
     return templates.TemplateResponse('rectangles.html',
-                                        {'request':request,
-                                        'imgs':img_paths,
-                                        'test':test_path,
-                                        'confidence':confidence,
-                                        })
+                                      {'request': request,
+                                       'groupname':group_name,
+                                       'imgs': img_paths,
+                                       'testname':test_name,
+                                       'test': test_path,
+                                       'confidence': confidence,
+                                       })

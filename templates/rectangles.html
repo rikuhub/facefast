@@ -10,49 +10,44 @@
 
 <body>
     <div>
-        <div class="container">
+        <div style="padding-left: 5vw;">
             <br>
             <div class="row">
                 <div class="col-md-10">
                     <h1>Welcome to Simple Face Recognition App</h1>
                 </div>
                 <div class="photo">
+                    <p style="color: black; font-size: 200%; display:inline;">Person Group:    {{groupname}}</p>
                     <table>
                         <th>
-                            {% for img in imgs %}
-                        <td>
-                            <img src="{{img}}"></img>
-                        </td>
-                        {% endfor %}
                         </th>
+                        <tr>
+                            {% for img in imgs %}
+                            <td>
+                                <img src="{{img}}"></img>
+                            </td>
+                            {% endfor %}
+                        </tr>
                     </table>
+                    <br>
+                    <div class="col-md-10">
+                        <p style="color: black; font-size: 200%; display:inline;">Test Image:   {{testname}}</p>
+                    </div>
                     <span class="testphoto">
-                        <img src="{{test}}">
+                        <img src="{{test}}" style="object-fit:cover; top:0;">
                         <div style="vertical-align: center;">
-                            <br>
-                            <br>
-                            <br>
-                            <br>
-                            <br>
-                            <br>
-                            <br>
-                            <br>
                             <h3 style="font-size: x-large; ">俺確率</h3>
-                            <span style="display: flex; text-align: center;">
-                                {% if confidence > 0.5 %}
-                                <p style="color: red; font-size: xx-large;"> {{confidence}} %</p>
-                                {% else %}
-                                <p> {{confidence}} %</p>
-                                {% endif %}
-                            </span>
-                            <p>の確率で</p>
-                            <span>
-                                {% if confidence > 0.5 %}
-                                <p style="color: black; font-size: xx-large;">俺</p>
-                                {% else %}
-                                <p>俺</p>
-                                {% endif %}
-                            </span>
+                            {% if confidence > 0.5 %}
+                            <p style="color: red; font-size:{{confidence*7}}%; display:inline;"> {{confidence}} %</p>
+                            {% else %}
+                            <p style="display:inline;"> {{confidence}} %</p>
+                            {% endif %}
+                            <p style="display:inline;">の確率で</p>
+                            {% if confidence > 0.5 %}
+                            <p style="color: black; font-size: {{confidence*5}}%; display:inline;">俺</p>
+                            {% else %}
+                            <p style="display:inline;">俺</p>
+                            {% endif %}
                         </div>
                     </span>
                 </div>

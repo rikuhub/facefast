@@ -19,7 +19,7 @@
 }
 .photo .testphoto div{
     width: 50vw;
-    height: 60vh;
+    height: auto;
 }
 
 .photo .testphoto .p{
@@ -33,7 +33,7 @@
     background: #FFF;
     border: solid 3px #6091d3;/*線*/
     border-radius: 10vw;/*角の丸み*/
+    width: 30vw;
     height:60vh;
-    width: 40vw;
     object-fit: cover;
 }

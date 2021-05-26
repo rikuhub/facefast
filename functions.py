@@ -10,6 +10,13 @@ def getRectangle(faceDictionary):
 def getAge(faceDictionary):
     rect = faceDictionary.face_rectangle
     left = rect.left
-    top = rect.top - 20
+    top = rect.top - 30
     
     return (left, top)
+
+def getName(faceDictionary):
+    rect = faceDictionary.face_rectangle
+    left = rect.left
+    top = rect.top + 60
+
+    return(left, top)
